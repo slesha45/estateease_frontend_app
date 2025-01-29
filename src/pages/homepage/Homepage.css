@@ -1,0 +1,73 @@
+.carousel-image {
+    width: 100%;
+    height: 500px;
+    object-fit: cover; 
+  }
+  
+  .black-text h5, .black-text p {
+    color: white; 
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+  }
+   
+  .page-item {
+    margin: 0 0.25rem;
+  }
+   
+  .page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: black;
+    background-color: white;
+    border: 1px solid #dee2e6;
+  }
+   
+  .page-link:hover {
+    color: white;
+    text-decoration: none;
+    background-color: #AB875F; 
+    border-color: #AB875F;
+  }
+   
+  .page-item.active .page-link {
+    z-index: 1;
+    color: white;
+    background-color: #AB875F;
+    border-color: #AB875F;
+  }
+   
+  .page-link:focus {
+    z-index: 2;
+    color: white;
+    background-color: #AB875F;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(128, 0, 128, 0.25);
+  }
+   
+  .page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+  }
+   
+  .page-item:not(.disabled) .page-link {
+    color: black;
+    background-color: white;
+    border: 1px solid #dee2e6;
+  }
+   
+  .page-item:not(.disabled) .page-link:hover {
+    color: white;
+    background-color: #AB875F;
+    border-color: #AB875F;
+  }

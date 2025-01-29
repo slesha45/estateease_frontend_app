@@ -1,0 +1,78 @@
+/* Footer section start */
+#footer {
+    background: #f7f7f7;
+    padding: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 1px;
+    background-image: url('https://arena.km.ua/wp-content/uploads/3538533.jpg');
+  }
+  
+  .logo-footer {
+    max-width: 50%;
+    margin: 60px auto 0;
+  }
+  
+  .social-links h2,
+  .useful-link h2,
+  .address h2 {
+    padding-bottom: 15px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+  
+  .use-links li,
+  .address-links li,
+  .f-social-icons a {
+    list-style: none;
+    font-size: 15px;
+    color: #777777;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .use-links li a,
+  .address-links li a,
+  .f-social-icons a {
+    color: #777777;
+    text-decoration: none;
+  }
+  
+  .use-links li a:hover,
+  .address-links li a:hover,
+  .f-social-icons a:hover {
+    color: #000;
+  }
+  
+  .f-social-icons a {
+    gap: 1rem;
+  }
+  
+  .f-social-icons a i {
+    margin-right: 0.5rem;
+  }
+  
+  .address-links li i,
+  .f-social-icons a i {
+    margin-right: 0.5rem;
+    color: #AB875F;
+  }
+  
+  .copy-right-sec {
+    padding: 1rem;
+    background: #AB875F;
+    color: #fff;
+    text-align: center;
+  }
+  
+  .copy-right-sec a {
+    color: #fcd462;
+    font-weight: 500;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  /* Footer section end */
+  

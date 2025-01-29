@@ -1,0 +1,46 @@
+/* UserProfile.css */
+.dashboard-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: 100vh;
+    gap: 40px; /* Ensure gap between profile details and properties list */
+}
+
+.profile-details, .properties-list {
+    border: 1px solid #ccc;
+    padding: 30px;
+    border-radius: 10px;
+    width: 400px; /* Increased width */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.profile-details h3, .properties-list h3 {
+    margin-bottom: 20px;
+}
+
+.profile-details div, .properties-list p {
+    margin-bottom: 20px; /* Ensure consistent gaps between contents */
+}
+
+.profile-details label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.profile-details input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.save-button {
+    display: block;
+    margin: 0 auto; /* Center the button */
+    padding: 10px 20px;
+    background-color: #AB875F; /* Desired button color */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}

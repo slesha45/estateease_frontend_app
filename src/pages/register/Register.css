@@ -1,0 +1,159 @@
+.register-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding-top: 10px;
+}
+
+.register-box {
+    display: flex;
+    background: linear-gradient(to right, #fff 50%, #AB875F 50%);
+    width: 1000px; 
+    max-width: 1000px;
+    min-height: 600px;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin-top: 50px;
+}
+
+.register-form {
+    flex: 1;
+    padding: 40px; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #fff;
+    overflow-y: auto;
+}
+
+.register-form h1 {
+    color: #1e1e1e;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.register-form label {
+    color: #1e1e1e;
+    margin-bottom: 5px;
+}
+
+.register-form .form-control {
+    width: 100% ;
+    padding: 10px;
+    margin-bottom: 15px; 
+    border: none;
+    border-radius: 5px;
+    background: #f8f9fa;
+    color: #000;
+}
+
+.register-button {
+    width:100%; 
+    padding: 10px;
+    background: #AB875F;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px; 
+}
+
+.register-button:hover {
+    background: #AB875F;
+}
+.social-login-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.social-login-container .or-text {
+    margin: 20px 0;
+    color: #aaa;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* Add space between icons */
+}
+
+.social-icons img {
+    width: 40px; /* Adjust size as needed */
+    height: 40px; /* Adjust size as needed */
+    cursor: pointer;
+}
+
+/* .error-message {
+    color: #ff4d4d;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+} */
+
+.login-text {
+    color: #aaa;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.login-text a {
+    color: #AB875F;
+    text-decoration: none;
+}
+
+.welcome-text {
+    flex: 1;
+    background: #AB875F;
+    color: #fff;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+.welcome-text img{
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+.welcome-text p {
+    font-family: 'Times New Roman', Times, serif; /* Apply the font specifically to the paragraph */
+    font-size: 16px; /* Adjust font size as needed */
+}
+.password-strength-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    margin: 6px 0;
+    border-radius: 4px;
+    position: relative;
+  }
+  
+  .password-strength-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 10px;
+    transition: width 0.3s ease;
+  }
+  
+  .weak {
+    background: red;
+  }
+  
+  .strong {
+    background: orange;
+  }
+  
+  .very-strong {
+    background: blue;
+  }
+  
