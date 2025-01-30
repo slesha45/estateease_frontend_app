@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+// frontend/Login.js
+
+import React, { useState, useEffect } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -18,7 +20,8 @@ const Login = () => {
 
   // Lockout & Attempts
   const [lockTime, setLockTime] = useState(null); // track how many seconds locked
-  const [timer, setTimer] = useState(null);        // countdown state
+  const [timer, setTimer] = useState(null); // countdown state
+  const [remainingAttempts, setRemainingAttempts] = useState(null); // attempts left
   const [notification, setNotification] = useState(""); // In-case you want local messages
 
   const navigate = useNavigate();
@@ -56,7 +59,6 @@ const Login = () => {
     let remainingTime = lockDuration; // in seconds
     setTimer(remainingTime);
 
-    // Clear any existing intervals before setting a new one
     const interval = setInterval(() => {
       remainingTime -= 1;
       setTimer(remainingTime);
@@ -65,9 +67,13 @@ const Login = () => {
         clearInterval(interval);
         setTimer(null);
         setLockTime(null);
+        // Optionally clear or update notification
         setNotification("");
       }
     }, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   };
 
   // ---------- LOGIN HANDLER ----------
@@ -88,57 +94,70 @@ const Login = () => {
 
     try {
       const res = await loginUserApi(data);
-      if (!res.data.success) {
-        // If the response indicates a lockout (403 status + remainingTime)
-        if (res.status === 403) {
-          // If there's a remainingTime field => user is locked out
-          if (res.data.remainingTime) {
-            setLockTime(res.data.remainingTime);
-            setNotification("Your account is locked. Please wait to try again.");
-            toast.error(
-              `Account is locked. Try again in ${res.data.remainingTime} seconds.`
-            );
-            startCountdown(res.data.remainingTime);
+      
+      // Log the response for debugging
+      console.log("Login Response:", res.data);
+
+      // Handle API responses based on status
+      if (res.status === 200) {
+        if (res.data.success) {
+          // ---------- SUCCESSFUL LOGIN ----------
+          toast.success(res.data.message);
+          setNotification("");
+          setRemainingAttempts(null);
+          setLockTime(null);
+          setTimer(null);
+
+          // Save token and user data in localStorage
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("user", JSON.stringify(res.data.userData));
+
+          // Redirect based on role
+          if (res.data.userData.isAdmin) {
+            window.location.href = "/admin/dashboard";
           } else {
-            // fallback if locked but no remainingTime
-            toast.error(res.data.message || "Account is locked!");
+            window.location.href = "/homepage";
           }
+        } else {
+          // Edge case: status=200 but success=false
+          setNotification(res.data.message || "Something went wrong!");
+          toast.error(res.data.message || "Something went wrong!");
         }
-        // Handle incorrect password attempts and show attempts left
-        else if (res.data.message === "Password not matched!") {
-          const remainingAttempts = res.data.remainingAttempts;
-          // If the API returns the number of attempts left, display it
-          if (remainingAttempts !== undefined) {
-            if (remainingAttempts === 3 || remainingAttempts === 2 || remainingAttempts === 1) {
-              toast.error(
-                `Password not matched! ${remainingAttempts} attempt(s) left.`
-              );
-            } else {
-              // if a bigger number or different logic
-              toast.error("Password not matched!");
-            }
+
+      } else if (res.status === 400) {
+        // Typically "Incorrect password!" or "User does not exist!"
+        if (res.data.message === "Incorrect password!") {
+          const attemptsLeft = res.data.remainingAttempts;
+          setRemainingAttempts(attemptsLeft);
+
+          if (attemptsLeft > 0) {
+            setNotification(`Password not matched! ${attemptsLeft} attempt(s) left.`);
+            toast.error(`Password not matched! ${attemptsLeft} attempt(s) left.`);
           } else {
-            // fallback if no attempts info
+            setNotification("Password not matched!");
             toast.error("Password not matched!");
           }
+        } else {
+          // Could be 'User does not exist!'
+          setNotification(res.data.message || "Login failed!");
+          toast.error(res.data.message || "Login failed!");
         }
-        // General error
-        else {
-          toast.error(res.data.message);
+
+      } else if (res.status === 403) {
+        // This is typically "Account locked due to multiple failed login attempts."
+        // with a "remainingTime"
+        if (res.data.remainingTime) {
+          const lockDuration = res.data.remainingTime; // in seconds
+          setLockTime(lockDuration);
+          toast.error(`Account is locked. Try again in ${lockDuration} seconds.`);
+          startCountdown(lockDuration);
+        } else {
+          toast.error(res.data.message || "Account is locked!");
         }
       } else {
-        // ---------- SUCCESSFUL LOGIN ----------
-        toast.success(res.data.message);
-        // Save token and user data in localStorage
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.userData));
+        // Any other error status (500, etc.)
 
-        // Redirect based on role
-        if (res.data.userData.isAdmin) {
-          window.location.href = "/admin/dashboard";
-        } else {
-          window.location.href = "/homepage";
-        }
+        toast.error(res.data.message || "An unexpected error occurred.");
       }
     } catch (error) {
       // Catch any unexpected errors
@@ -162,103 +181,126 @@ const Login = () => {
   const handleForgotPassword = () => navigate("/forgot_password");
   const handleRegister = () => navigate("/register");
 
+  // ---------- EFFECT FOR CLEANUP ----------
+  useEffect(() => {
+    // Cleanup function to clear timer on component unmount
+    return () => {
+      if (timer) {
+        clearInterval(timer);
+      }
+    };
+  }, [timer]);
+
   // ---------- RENDER ----------
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <div className="login-form">
-          <h2>Login</h2>
+    <>
+      <div className="login-container">
+        <div className="login-box">
+          <div className="login-form">
+            <h2>Login</h2>
 
-          {/* Notification or Lockout message (if any) */}
-          {notification && (
-            <div className="notification" style={{ color: "red" }}>
-              {notification}
-            </div>
-          )}
+            {/* Notification or Lockout message (if any) */}
+            {notification && (
+              <div className="notification" style={{ color: "red" }}>
+                {notification}
+              </div>
+            )}
 
-          {/* Display lockout timer if lockTime is active */}
-          {lockTime && timer && (
-            <div className="lock-message" style={{ color: "red" }}>
-              Your account is locked. Try again in {timer} seconds.
-            </div>
-          )}
+            {/* Show attempts left if not locked */}
+            {remainingAttempts !== null && remainingAttempts > 0 && !lockTime && (
+              <div className="attempts-left" style={{ color: "orange" }}>
+                You have {remainingAttempts} attempt(s) left before the account locks.
+              </div>
+            )}
 
-          <form>
-            <label>Email Address :</label>
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              type="text"
-              className="form-control"
-              placeholder="Enter your email address"
-            />
-            {emailError && <p className="error-message">{emailError}</p>}
+            {/* Display lockout timer if lockTime is active */}
+            {lockTime && timer !== null && (
+              <div className="lock-message" style={{ color: "red" }}>
+                Try again in {timer} second{timer !== 1 ? "s" : ""}.
+              </div>
+            )}
 
-            <label>Password</label>
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              type="password"
-              className="form-control"
-              placeholder="Enter your password"
-            />
-            {passwordError && <p className="error-message">{passwordError}</p>}
-
-            <div className="captcha-container">
-              <ReCAPTCHA
-                sitekey="6LcZbb8qAAAAAK1Ik3xs59Lny8erLjrEzgeBttrd" // Replace with your actual site key
-                onChange={handleCaptchaChange}
+            <form>
+              <label>Email Address :</label>
+              <input
+                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                className="form-control"
+                placeholder="Enter your email address"
+                value={email}
               />
-              {captchaError && <p className="error-message">{captchaError}</p>}
+              {emailError && <p className="error-message">{emailError}</p>}
+
+              <label>Password</label>
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                type="password"
+                className="form-control"
+                placeholder="Enter your password"
+                value={password}
+              />
+              {passwordError && <p className="error-message">{passwordError}</p>}
+
+              <div className="captcha-container">
+                <ReCAPTCHA
+                  sitekey="6LcZbb8qAAAAAK1Ik3xs59Lny8erLjrEzgeBttrd" // Replace with your actual site key
+                  onChange={handleCaptchaChange}
+                />
+                {captchaError && <p className="error-message">{captchaError}</p>}
+              </div>
+
+              {/* If account is locked, disable the button until timer ends */}
+              <button
+                onClick={handleLogin}
+                className="btn login-button"
+                disabled={!!lockTime}
+              >
+                Login
+              </button>
+              <p className="forgot-password-text">
+                <span onClick={handleForgotPassword} style={{ cursor: "pointer" }}>
+                  Forgot your password?
+                </span>
+              </p>
+            </form>
+
+            <div className="social-login-container">
+              <p className="or-text">or</p>
+              <div className="social-icons">
+                <img
+                  src="/assets/icons/facebook.png"
+                  alt="Facebook Login"
+                  onClick={() => toast.info("Facebook login is not implemented yet")}
+                  style={{ cursor: "pointer" }}
+                />
+                <img
+                  src="/assets/icons/google.png"
+                  alt="Google Login"
+                  onClick={() => toast.info("Google login is not implemented yet")}
+                  style={{ cursor: "pointer" }}
+                />
+              </div>
             </div>
 
-            {/* If account is locked, disable the button until timer ends */}
-            <button
-              onClick={handleLogin}
-              className="btn login-button"
-              disabled={!!lockTime}
-            >
-              Login
-            </button>
-            <p className="forgot-password-text">
-              <span onClick={handleForgotPassword} style={{ cursor: "pointer" }}>
-                Forgot your password?
+            <p className="signup-text">
+              Don't have an account?{" "}
+              <span onClick={handleRegister} style={{ cursor: "pointer" }}>
+                Sign Up
               </span>
             </p>
-          </form>
-
-          <div className="social-login-container">
-            <p className="or-text">or</p>
-            <div className="social-icons">
-              <img
-                src="/assets/icons/facebook.png"
-                alt="Facebook Login"
-                onClick={() => toast.info("Facebook login is not implemented yet")}
-              />
-              <img
-                src="/assets/icons/google.png"
-                alt="Google Login"
-                onClick={() => toast.info("Google login is not implemented yet")}
-              />
-            </div>
           </div>
 
-          <p className="signup-text">
-            Don't have an account?{" "}
-            <span onClick={handleRegister} style={{ cursor: "pointer" }}>
-              Sign Up
-            </span>
-          </p>
-        </div>
-
-        <div className="welcome-text">
-          <h2>WELCOME BACK!</h2>
-          <img src="/assets/images/loginpage.png" alt="Login" />
-          <p>
-            Hey there, please login to your account to continue Estate Ease! Always
-            remember us if you're finding a home.
-          </p>
+          <div className="welcome-text">
+            <h2>WELCOME BACK!</h2>
+            <img src="/assets/images/loginpage.png" alt="Login" />
+            <p>
+              Hey there, please login to your account to continue Estate Ease! Always
+              remember us if you're finding a home.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
