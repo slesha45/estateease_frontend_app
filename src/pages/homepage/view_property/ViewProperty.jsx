@@ -108,37 +108,22 @@ const ViewProperty = () => {
 
   const handleBookingSubmit = async (e) => {
     e.preventDefault();
-  
-    const user = JSON.parse(localStorage.getItem('user')) // Fetch user from localStorage or context
-  
-    if (!user || !user._id) {
-      toast.error("User not logged in. Please log in to continue.");
-      return;
-    }
-  
-    if (!bookingForm.date || !bookingForm.time) {
-      toast.error("Please fill in all required fields.");
-      return;
-    }
-  
     const bookingData = {
       userId: user._id,
       propertyId: id,
       date: bookingForm.date,
-      time: bookingForm.time,
+      time: bookingForm.time
     };
-  
-    console.log("Booking Data:", bookingData);
-  
+
     try {
       const res = await createBooking(bookingData);
-      console.log("Booking Response:", res.data);
-      toast.success("Booking created successfully!");
+      console.log('Booking created:', res.data);
       setBookingForm({ name: '', email: '', phone: '', date: '', time: '' });
       setShowBookingModal(false);
+      toast.success('Booking created successfully!');
     } catch (error) {
-      console.error("Error creating booking:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Booking creation failed!");
+      console.error('Booking creation error:', error.response ? error.response.data : error.message);
+      toast.error('Booking creation failed!');
     }
   };
 
