@@ -33,6 +33,9 @@ const AdminNavbar = () => {
                                 <li className='nav-item'>
                                     <Link to="/admin/view_contact" className='nav-link' style={{ color: 'white' }}> <FaMessage/> Contact</Link>
                                 </li>
+                                <li className='nav-item'>
+                                    <Link to="/admin/users" className='nav-link' style={{ color: 'white' }}> <FaUser/> Users</Link>
+                                </li>
 
 
                             </ul>
