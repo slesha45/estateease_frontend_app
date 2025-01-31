@@ -29,6 +29,7 @@ import MyBookings from "./pages/userBooking/MyBookings";
 import ContactUs from "./pages/contactUs/ContactUs";
 import ViewContact from "./pages/admin/view_contact/ViewContact";
 import Users from "./pages/admin/users/Users";
+import VerifyEmail from "./pages/verifyEmail/VerifyEmail";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path='/register' element={<Register />} />
         <Route path='/about/us' element={<Aboutus />} />
         <Route path='/homepage' element={<Homepage />} />
+        <Route path='/verify-email/:token' element={<VerifyEmail />} />
 
         {/*Admin routes*/}
         <Route element={<AdminRoutes />}>
