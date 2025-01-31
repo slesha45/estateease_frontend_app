@@ -44,6 +44,9 @@ export const loginUserApi = (data) => {
   });
 };
 
+export const verifyEmailApi = (data) =>
+  Api.put(`/api/user/verifyEmail/${data.token}`);
+
 // Add the following function to fetch all users
 export const getAllUsersApi = () => Api.get('/api/user/all', getConfig());
  
