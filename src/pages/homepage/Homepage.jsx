@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getPropertyCount, propertyPagination } from '../../apis/Api';
 import PropertyCard from '../../components/PropertyCard';
+import DOMPurify from 'dompurify'; // Import DOMPurify
 import './Homepage.css';
 
 const Homepage = () => {
@@ -31,7 +32,9 @@ const Homepage = () => {
 
   const fetchProperties = async (pageNum, query, sort) => {
     try {
-      const res = await propertyPagination(pageNum, limit, query, sort);
+      // Sanitize search query before sending to backend
+      const sanitizedQuery = DOMPurify.sanitize(query);
+      const res = await propertyPagination(pageNum, limit, sanitizedQuery, sort);
       setProperties(res.data.property || []);
     } catch (err) {
       setError(err.response?.data?.message || 'Error fetching properties');
@@ -43,7 +46,9 @@ const Homepage = () => {
   };
 
   const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
+    // Sanitize user input before setting state
+    const sanitizedValue = DOMPurify.sanitize(event.target.value);
+    setSearchQuery(sanitizedValue);
     setPage(1); // Reset to first page on search
   };
 
@@ -54,6 +59,7 @@ const Homepage = () => {
 
   return (
     <div className="container">
+      {/* Carousel Section */}
       <div id="carouselExampleCaptions" className="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
         <div className="carousel-indicators">
           <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
@@ -62,21 +68,21 @@ const Homepage = () => {
         </div>
         <div className="carousel-inner">
           <div className="carousel-item active">
-            <img src="/assets/images/carousel1.jpg" className="d-block w-100 carousel-image" alt="..." />
+            <img src="/assets/images/carousel1.jpg" className="d-block w-100 carousel-image" alt="Carousel Slide 1" />
             <div className="carousel-caption d-none d-md-block black-text">
               <h5>Hurry up and buy!</h5>
               <p>Don't miss the golden chance</p>
             </div>
           </div>
           <div className="carousel-item">
-            <img src="/assets/images/carousel2.jpg" className="d-block w-100 carousel-image" alt="..." />
+            <img src="/assets/images/carousel2.jpg" className="d-block w-100 carousel-image" alt="Carousel Slide 2" />
             <div className="carousel-caption d-none d-md-block black-text">
               <h5>Best Rate in the Market!</h5>
               <p>Look at the properties</p>
             </div>
           </div>
           <div className="carousel-item">
-            <img src="/assets/images/carousel3.jpg" className="d-block w-100 carousel-image" alt="..." />
+            <img src="/assets/images/carousel3.jpg" className="d-block w-100 carousel-image" alt="Carousel Slide 3" />
             <div className="carousel-caption d-none d-md-block black-text">
               <h5>Offer offer offer</h5>
               <p>Book flats at best price!</p>
@@ -93,6 +99,7 @@ const Homepage = () => {
         </button>
       </div>
 
+      {/* Search Bar Section */}
       <div className="row mt-4">
         <div className="col-12 text-left">
           <div className="input-group my-4">
@@ -110,17 +117,29 @@ const Homepage = () => {
         </div>
       </div>
 
+      {/* Sort Dropdown Section */}
       <div className="dropdown mb-3">
         <button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }}>
           Sort by
         </button>
         <ul className="dropdown-menu">
-          <li><button className="dropdown-item" onClick={() => handleSortOrderChange('asc')}>Price : Low to High</button></li>
-          <li><button className="dropdown-item" onClick={() => handleSortOrderChange('desc')}>Price : High to Low</button></li>
+          <li>
+            <button className="dropdown-item" onClick={() => handleSortOrderChange('asc')}>
+              Price : Low to High
+            </button>
+          </li>
+          <li>
+            <button className="dropdown-item" onClick={() => handleSortOrderChange('desc')}>
+              Price : High to Low
+            </button>
+          </li>
         </ul>
       </div>
 
-      <h2 className="mt-2">Look Into <span style={{ color: '#AB875F' }}>Estate Ease</span></h2>
+      {/* Property Listings Section */}
+      <h2 className="mt-2">
+        Look Into <span style={{ color: '#AB875F' }}>Estate Ease</span>
+      </h2>
       <div className="row row-cols-1 row-cols-md-4 g-4">
         {error ? (
           <div className="text-red-500">{error}</div>
@@ -133,25 +152,35 @@ const Homepage = () => {
         )}
       </div>
 
-      {/* Pagination */}
+      {/* Pagination Section */}
       <nav aria-label="Page navigation" className="mt-8">
         <ul className="pagination justify-content-center mt-3">
           <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePagination(1)} style={{ color: '#AB875F' }}>First</button>
+            <button className="page-link" onClick={() => handlePagination(1)} style={{ color: '#AB875F' }}>
+              First
+            </button>
           </li>
           <li className={`page-item ${page === 1 ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePagination(page - 1)} style={{ color: '#AB875F' }}>Previous</button>
+            <button className="page-link" onClick={() => handlePagination(page - 1)} style={{ color: '#AB875F' }}>
+              Previous
+            </button>
           </li>
           {Array.from({ length: totalPages }, (_, i) => (
             <li key={i} className={`page-item ${page === i + 1 ? 'active' : ''}`}>
-              <button className="page-link" onClick={() => handlePagination(i + 1)}>{i + 1}</button>
+              <button className="page-link" onClick={() => handlePagination(i + 1)}>
+                {i + 1}
+              </button>
             </li>
           ))}
           <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePagination(page + 1)} style={{ color: '#AB875F' }}>Next</button>
+            <button className="page-link" onClick={() => handlePagination(page + 1)} style={{ color: '#AB875F' }}>
+              Next
+            </button>
           </li>
           <li className={`page-item ${page === totalPages ? 'disabled' : ''}`}>
-            <button className="page-link" onClick={() => handlePagination(totalPages)} style={{ color: '#AB875F' }}>Last</button>
+            <button className="page-link" onClick={() => handlePagination(totalPages)} style={{ color: '#AB875F' }}>
+              Last
+            </button>
           </li>
         </ul>
       </nav>
