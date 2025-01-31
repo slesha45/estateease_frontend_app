@@ -28,6 +28,7 @@ import BookingList from "./pages/admin/Booking list/BookingList";
 import MyBookings from "./pages/userBooking/MyBookings";
 import ContactUs from "./pages/contactUs/ContactUs";
 import ViewContact from "./pages/admin/view_contact/ViewContact";
+import Users from "./pages/admin/users/Users";
 
 function App() {
   return (
@@ -48,6 +49,7 @@ function App() {
           <Route path='/admin/dashboard/update/:id' element={<UpdateProperty />} />
           <Route path = '/admin/booking_list' element={<BookingList/>}></Route>
           <Route path="/admin/view_contact" element={<ViewContact/>}/>
+          <Route path="/admin/users" element={<Users/>}/>
         </Route>
 
         <Route path="/user/profile" element={<UserProfile />} />
