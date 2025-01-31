@@ -16,6 +16,20 @@ const config = {
   }
 }
 
+const getToken = () => localStorage.getItem('token');
+const jsonConfig = {
+    headers: {
+      "Content-Type": "application/json",
+      authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  };
+
+const getConfig = () => ({
+  headers: {
+      'Authorization': `Bearer ${getToken()}`
+  }
+});
+
 //Test API
 
 //Register Api
@@ -29,6 +43,15 @@ export const loginUserApi = (data) => {
     validateStatus: () => true, 
   });
 };
+
+// Add the following function to fetch all users
+export const getAllUsersApi = () => Api.get('/api/user/all', getConfig());
+ 
+// New logout API function
+export const logoutUserApi = () => Api.post('/api/user/logout', null, getConfig());
+
+// Get user details API
+export const getUserDetails = (userId) => Api.get(`/api/user/${userId}`, getConfig());
 
 //create property API
 export const createPropertyApi = (data) => Api.post('/api/property/create', data)
