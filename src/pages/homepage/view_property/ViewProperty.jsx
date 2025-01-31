@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { createBooking, getSingleProperty, getUserProfileApi, getReviewsApi, addReviewApi } from '../../../apis/Api';
 import { toast } from 'react-toastify';
 import Rating from 'react-rating-stars-component';
+import DOMPurify from 'dompurify'; // Import DOMPurify
 
 const ViewProperty = () => {
   const { id } = useParams();
@@ -53,8 +54,13 @@ const ViewProperty = () => {
     const fetchReviews = async () => {
       try {
         const res = await getReviewsApi(id);
-        setReviews(res.data.reviews);
-        calculateAverageRating(res.data.reviews);
+        // Sanitize each review comment before setting state
+        const sanitizedReviews = res.data.reviews.map(review => ({
+          ...review,
+          comment: DOMPurify.sanitize(review.comment)
+        }));
+        setReviews(sanitizedReviews);
+        calculateAverageRating(sanitizedReviews);
       } catch (err) {
         toast.error("Failed to fetch reviews");
       }
@@ -133,12 +139,24 @@ const ViewProperty = () => {
       return;
     }
 
+    // Sanitize the new review comment before sending
+    const sanitizedComment = DOMPurify.sanitize(newReview);
+
     try {
-      const res = await addReviewApi({ propertyId: id, rating, comment: newReview });
+      const res = await addReviewApi({ propertyId: id, rating, comment: sanitizedComment });
       toast.success(res.data.message);
-    // Refresh reviews after submitting a new one
+      // Refresh reviews after submitting a new one
       setRating(1); // Reset rating
       setNewReview(""); // Reset comment
+
+      // Optionally, fetch reviews again to include the new review
+      const updatedReviews = await getReviewsApi(id);
+      const sanitizedUpdatedReviews = updatedReviews.data.reviews.map(review => ({
+        ...review,
+        comment: DOMPurify.sanitize(review.comment)
+      }));
+      setReviews(sanitizedUpdatedReviews);
+      calculateAverageRating(sanitizedUpdatedReviews);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.message) {
         toast.error(err.response.data.message);
@@ -189,61 +207,67 @@ const ViewProperty = () => {
         </div>
       </div>
 
-      <div className="container border p-3 rounded" style={{marginBottom: '50px', marginTop: '5px'}}>
+      {/* Review Section */}
+      <div className="container border p-3 rounded" style={{ marginBottom: '50px', marginTop: '5px' }}>
         <div className="row">
           <div className="col-md-12">
             <h4>Customer Reviews</h4>
             <div className="review-summary mb-3">
-            <Rating
-              value={averageRating}
-              edit={false}
-              size={24}
-              activeColor="#ffd700"
-            />
-            <p>{averageRating.toFixed(1)} out of 5 stars</p>
-            <div className="reviews-list mt-3 ">
-              {reviews.length === 0 ? (
-                <p>No reviews yet.</p>
-              ) : (
-                reviews.map((rev, index) => (
-                  <div key={index} className="review-item border p-3 rounded mt-1 ">
-                    <p><strong>{rev.userId.firstName} {rev.userId.lastName}</strong></p>
-                    <Rating
-                      value={rev.rating}
-                      edit={false}
-                      size={20}
-                      activeColor="#ffd700"
-                    />
-                    <p>{rev.comment}</p>
-                  </div>
-                ))
-              )}
-            </div>
-
-            <div className="mt-3">
-              <h4>Add a Review</h4>
-              <div className="review-form border p-3 rounded">
-              <textarea
-                value={newReview}
-                onChange={(e) => setNewReview(e.target.value)}
-                placeholder="Write your review here."
-                rows="4"
-                className="review-textarea form-control"
+              <Rating
+                value={averageRating}
+                edit={false}
+                size={24}
+                activeColor="#ffd700"
               />
-              <div className="rating-input mt-2 d-flex align-items-center">
-                <label className="me-2">Rating:</label>
-                <select value={rating} onChange={(e) => setRating(parseInt(e.target.value, 10))}>
-                  {[1, 2, 3, 4, 5].map(num => (
-                    <option key={num} value={num}>{num} ★</option>
-                  ))}
-                </select>
+              <p>{averageRating.toFixed(1)} out of 5 stars</p>
+              <div className="reviews-list mt-3">
+                {reviews.length === 0 ? (
+                  <p>No reviews yet.</p>
+                ) : (
+                  reviews.map((rev, index) => (
+                    <div key={index} className="review-item border p-3 rounded mt-1">
+                      <p><strong>{DOMPurify.sanitize(`${rev.userId.firstName} ${rev.userId.lastName}`)}</strong></p>
+                      <Rating
+                        value={rev.rating}
+                        edit={false}
+                        size={20}
+                        activeColor="#ffd700"
+                      />
+                      <p>{DOMPurify.sanitize(rev.comment)}</p>
+                    </div>
+                  ))
+                )}
               </div>
-              <button className="btn btn-secondary mt-3" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }} onClick={submitReview}>Submit Review</button>
+
+              <div className="mt-3">
+                <h4>Add a Review</h4>
+                <div className="review-form border p-3 rounded">
+                  <textarea
+                    value={newReview}
+                    onChange={(e) => setNewReview(DOMPurify.sanitize(e.target.value))} // Sanitize input
+                    placeholder="Write your review here."
+                    rows="4"
+                    className="review-textarea form-control"
+                  />
+                  <div className="rating-input mt-2 d-flex align-items-center">
+                    <label className="me-2">Rating:</label>
+                    <select value={rating} onChange={(e) => setRating(parseInt(e.target.value, 10))}>
+                      {[1, 2, 3, 4, 5].map(num => (
+                        <option key={num} value={num}>{num} ★</option>
+                      ))}
+                    </select>
+                  </div>
+                  <button className="btn btn-secondary mt-3" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }} onClick={submitReview}>
+                    Submit Review
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Call Modal */}
       {showCallModal && (
         <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
@@ -258,14 +282,17 @@ const ViewProperty = () => {
                 <p>Make a call, get your property booked.</p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }} onClick={handleCloseCallModal}>Close</button>
+                <button type="button" className="btn btn-secondary" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }} onClick={handleCloseCallModal}>
+                  Close
+                </button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-       {showBookingModal && (
+      {/* Booking Modal */}
+      {showBookingModal && (
         <div className="modal fade show" style={{ display: 'block' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
@@ -285,28 +312,25 @@ const ViewProperty = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="phone" className="form-label">Phone</label>
-                    <input type="tel" className="form-control" id="phone" name="phone" value={bookingForm.phone} onChange={handleBookingFormChange} required style={{ borderColor: '#AB875F' }}/>
+                    <input type="tel" className="form-control" id="phone" name="phone" value={bookingForm.phone} onChange={handleBookingFormChange} required style={{ borderColor: '#AB875F' }} />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="date" className="form-label">Preferred Date</label>
-                    <input type="date" className="form-control" id="date" name="date" value={bookingForm.date} onChange={handleBookingFormChange} min={minDate} required style={{ borderColor: '#AB875F' }}/>
+                    <input type="date" className="form-control" id="date" name="date" value={bookingForm.date} onChange={handleBookingFormChange} min={minDate} required style={{ borderColor: '#AB875F' }} />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="time" className="form-label">Preferred Time</label>
-                    <input type="time" className="form-control" id="time" name="time" value={bookingForm.time} onChange={handleBookingFormChange} min={minTime} required style={{ borderColor: '#AB875F' }}/>
+                    <input type="time" className="form-control" id="time" name="time" value={bookingForm.time} onChange={handleBookingFormChange} min={minTime} required style={{ borderColor: '#AB875F' }} />
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-                  <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }}>Submit Booking</button>
+                    <button type="submit" className="btn btn-primary" style={{ backgroundColor: '#AB875F', borderColor: '#AB875F' }}>Submit Booking</button>
                   </div>
-                  
                 </form>
               </div>
             </div>
           </div>
         </div>
       )}
-      </div>
-      </div>
     </>
   );
 };
