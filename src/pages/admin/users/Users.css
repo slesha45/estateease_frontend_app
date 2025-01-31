@@ -1,0 +1,166 @@
+/* Full-Page Wrapper Styling */
+.users-page {
+    min-height: 100vh; /* Ensure it covers the full viewport height */
+    background-image: url("https://assets-global.website-files.com/61e7be6e6f17f5346fc7ec9f/61e7be6f6f17f5a75bc7ed68_background-sign-in-tech-ui-kit-webflow-template.svg"); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+ 
+  /* Container Styling */
+  .users-container {
+    background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white for better readability over background image */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 1200px; /* Limit the maximum width */
+    width: 100%;
+    color: #333; /* Default text color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+ 
+  /* Heading Styling */
+  .users-container h2 {
+    color: #333;
+    font-weight: 700;
+  }
+ 
+  /* Search Bar Styling */
+  .users-container .search-bar .input-group {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+ 
+  .users-container .search-bar .form-control {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+ 
+  .users-container .search-bar .input-group-text {
+    border-radius: 0 0.25rem 0.25rem 0;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+  }
+ 
+  .users-container .search-bar .input-group-text:hover {
+    background-color: #0056b3;
+  }
+ 
+  /* Table Styling */
+  .users-container .table {
+    background-color: #fff;
+    width: 100%;
+  }
+ 
+  .users-container .table th, .users-container .table td {
+    vertical-align: middle !important;
+    text-align: center;
+  }
+ 
+  .users-container .table thead th {
+    font-size: 1rem;
+    background-color: #fff; /* White background for headers */
+    color: #000; /* Black text for headers */
+  }
+ 
+  .users-container .table thead th:hover {
+    background-color: #f1f1f1; /* Optional: subtle hover effect */
+  }
+ 
+  .users-container .table tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
+  }
+ 
+  /* Badge Styling */
+  .users-container .badge {
+    font-size: 0.9rem;
+    padding: 0.5em 0.75em;
+  }
+ 
+  .users-container .badge .me-1 {
+    margin-right: 0.25rem;
+  }
+ 
+  /* Modal Styling */
+  .modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+ 
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+ 
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .users-container .search-bar .input-group {
+      max-width: 100%;
+    }
+ 
+    .users-container .table-responsive {
+      overflow-x: auto;
+    }
+ 
+    .users-container {
+      padding: 20px;
+    }
+ 
+    .users-container .table thead {
+      display: none;
+    }
+ 
+    .users-container .table, .users-container .table tbody, .users-container .table tr, .users-container .table td {
+      display: block;
+      width: 100%;
+    }
+ 
+    .users-container .table tr {
+      margin-bottom: 15px;
+    }
+ 
+    .users-container .table td {
+      text-align: right;
+      padding-left: 50%;
+      position: relative;
+    }
+ 
+    .users-container .table td::before {
+      content: attr(data-label);
+      position: absolute;
+      left: 0;
+      width: 50%;
+      padding-left: 15px;
+      font-weight: bold;
+      text-align: left;
+    }
+ 
+    /* Modal Responsiveness */
+    .modal {
+      max-width: 90%;
+    }
+  }
