@@ -44,6 +44,13 @@ function App() {
         <Route path='/about/us' element={<Aboutus />} />
         <Route path='/homepage' element={<Homepage />} />
         <Route path='/verify-email/:token' element={<VerifyEmail />} />
+        <Route path="/user/profile" element={<UserProfile />} />
+        <Route path="/homepage/view/:id" element={<ViewProperty />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/terms_condition" element={<Termscondition/>}/>
+        <Route path="/forgot_password" element={<ForgotPassword/>}/>
+        <Route path="/contact_us" element={<ContactUs/>}/>
+        <Route path="/my_bookings" element={<MyBookings />} />
 
         {/*Admin routes*/}
         <Route element={<AdminRoutes />}>
@@ -53,16 +60,7 @@ function App() {
           <Route path="/admin/view_contact" element={<ViewContact/>}/>
           <Route path="/admin/users" element={<Users/>}/>
         </Route>
-
-        <Route path="/user/profile" element={<UserProfile />} />
-        <Route path="/homepage/view/:id" element={<ViewProperty />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/terms_condition" element={<Termscondition/>}/>
-        <Route path="/forgot_password" element={<ForgotPassword/>}/>
-        {/* <Route path="/khalti" element={<khalti/>}/> */}
-        <Route path="/contact_us" element={<ContactUs/>}/>
-        <Route path="/my_bookings" element={<MyBookings />} />
-
+        
       </Routes>
       <Footer/>
     </Router>
