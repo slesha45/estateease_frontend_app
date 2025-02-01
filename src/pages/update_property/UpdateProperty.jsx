@@ -10,10 +10,6 @@ const UpdateProperty = () => {
     //get property infromation (Backend)
     useEffect(() => {
         getSingleProperty(id).then((res) => {
-            console.log(res.data)
-
-            //res -> data(message, success, property) -> (pn, pp, pc)
-            //res.data.property.propertyTitle
             setPropertyTitle(res.data.property.propertyTitle)
             setPropertyPrice(res.data.property.propertyPrice)
             setPropertyCategory(res.data.property.propertyCategory)
