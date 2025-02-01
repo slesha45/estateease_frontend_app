@@ -57,18 +57,16 @@ const Register = () => {
     setPhone(e.target.value);
   };
 
-  // ---------- PASSWORD STRENGTH EVALUATION ----------
+  // PASSWORD STRENGTH EVALUATION
   const evaluatePasswordStrength = (pwd) => {
     let strength = { percentage: 0, label: 'Weak' };
 
-    // Base checks for length, uppercase, lowercase, digits, special chars
     if (pwd.length >= 8)       strength.percentage += 25;
-    if (/[A-Z]/.test(pwd))     strength.percentage += 25;  // Uppercase
-    if (/[a-z]/.test(pwd))     strength.percentage += 20;  // Lowercase
-    if (/\d/.test(pwd))        strength.percentage += 15;  // Number
-    if (/[@$!%*?&]/.test(pwd)) strength.percentage += 15;  // Special character
+    if (/[A-Z]/.test(pwd))     strength.percentage += 25;  
+    if (/[a-z]/.test(pwd))     strength.percentage += 20;  
+    if (/\d/.test(pwd))        strength.percentage += 15;  
+    if (/[@$!%*?&]/.test(pwd)) strength.percentage += 15; 
 
-    // Label by final percentage
     if (strength.percentage <= 40) {
       strength.label = 'Weak';
     } else if (strength.percentage <= 75) {
