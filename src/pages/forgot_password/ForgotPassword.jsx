@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { forgetPasswordApi, verifyOtpApi } from '../../apis/Api'
 import { toast } from 'react-toastify'
-//import 'bootstrap/dist/css/bootstrap.min.css';
-//import 'tailwindcss/tailwind.css';
 import './ForgotPassword.css';
  
 const ForgotPassword = () => {
