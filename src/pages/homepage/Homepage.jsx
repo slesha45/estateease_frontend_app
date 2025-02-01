@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getPropertyCount, propertyPagination } from '../../apis/Api';
 import PropertyCard from '../../components/PropertyCard';
-import DOMPurify from 'dompurify'; // Import DOMPurify
+import DOMPurify from 'dompurify';
 import './Homepage.css';
 
 const Homepage = () => {
