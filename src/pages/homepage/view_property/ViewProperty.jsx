@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { createBooking, getSingleProperty, getUserProfileApi, getReviewsApi, addReviewApi } from '../../../apis/Api';
 import { toast } from 'react-toastify';
 import Rating from 'react-rating-stars-component';
-import DOMPurify from 'dompurify'; // Import DOMPurify
+import DOMPurify from 'dompurify';
 
 const ViewProperty = () => {
   const { id } = useParams();
